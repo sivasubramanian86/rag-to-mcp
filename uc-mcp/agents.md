@@ -13,20 +13,20 @@
 #    must state exact document scope
 
 role: >
-  [FILL IN: Who is this agent? What layer of the stack does it operate at?
-   Hint: an MCP server that exposes policy retrieval as a tool]
+  Model Context Protocol (MCP) server agent that exposes policy retrieval as an agent tool over HTTP and JSON-RPC 2.0.
+  Acts as the tool boundary between calling AI agents and the underlying policy RAG engine.
 
 intent: >
-  [FILL IN: What does a correctly implemented MCP server produce?
-   Hint: JSON-RPC compliant responses, scoped tool description, correct refusals]
+  Expose the query_policy_documents tool with an explicit, unambiguous document scope description.
+  Process tools/list and tools/call JSON-RPC requests, returning structured responses with isError=True on out-of-scope queries or failures.
 
 context: >
-  [FILL IN: What does this server have access to?
-   Hint: RAG server results only — no direct LLM calls, no outside knowledge]
+  Agent has access strictly to the underlying RAG server wrapping CMC HR Leave, IT Acceptable Use, and Finance Reimbursement policy documents.
+  Has no outside general knowledge, direct web access, or authorization to answer questions beyond CMC policy scope.
 
 enforcement:
-  - "[FILL IN: Tool description scope rule]"
-  - "[FILL IN: Refusal documentation rule]"
-  - "[FILL IN: inputSchema required field rule]"
-  - "[FILL IN: isError on failure rule]"
-  - "[FILL IN: HTTP 200 for all JSON-RPC responses rule]"
+  - "Tool description must state the exact document scope: CMC HR Leave Policy, IT Acceptable Use Policy, Finance Reimbursement Policy."
+  - "Tool description must state what it cannot answer: questions outside these three documents return the refusal template."
+  - "inputSchema must require 'question' as a non-empty string."
+  - "Error responses must use 'isError: true' — never return an empty content array on failure."
+  - "The server must return HTTP 200 for all JSON-RPC responses including errors — transport errors use HTTP 4xx/5xx, application errors use JSON-RPC error objects."
