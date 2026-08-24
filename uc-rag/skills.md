@@ -13,13 +13,13 @@
 
 skills:
   - name: chunk_documents
-    description: "[FILL IN]"
-    input: "[FILL IN: path to policy-documents directory]"
-    output: "[FILL IN: list of chunk dicts with doc_name, chunk_index, text]"
-    error_handling: "[FILL IN: what happens if a file is missing or unreadable]"
+    description: Load all policy documents from directory and split into sentence-bounded chunks of maximum 400 tokens without splitting mid-sentence.
+    input: File path to policy documents directory containing .txt files.
+    output: List of chunk dicts, each with keys doc_name, chunk_index, text, and id.
+    error_handling: If directory or file missing, log warning and skip. Never split mid-sentence. If a single sentence exceeds max_tokens, preserve sentence intact to avoid cutting obligations.
 
   - name: retrieve_and_answer
-    description: "[FILL IN]"
-    input: "[FILL IN: query string]"
-    output: "[FILL IN: answer string + list of cited chunks]"
-    error_handling: "[FILL IN: what happens when no chunk scores above 0.6]"
+    description: Embed query, retrieve top-3 most relevant chunks from vector collection, filter by cosine similarity threshold 0.6, and synthesize grounded answer with chunk citations.
+    input: Query string, optional llm_call callable, top_k integer (default 3), threshold float (default 0.6).
+    output: Dict with keys answer, cited_chunks (list of doc_name, chunk_index, score, text), and refused boolean.
+    error_handling: If no chunks pass similarity threshold 0.6, return refusal template with refused=True. Never hallucinate answers outside retrieved context. Never blend across disparate policy documents.
